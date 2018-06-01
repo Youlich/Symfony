@@ -19,8 +19,6 @@ class AdvertController extends Controller
 			// une page d'erreur 404 (qu'on pourra personnaliser plus tard d'ailleurs)
 			throw new NotFoundHttpException('Page "'.$page.'" inexistante.');
 		}
-
-
 			// Notre liste d'annonce en dur
 			$listAdverts = array(
 				array(
@@ -47,7 +45,6 @@ class AdvertController extends Controller
 		return $this->render('OCPlatformBundle:Advert:index.html.twig', array(
 			'listAdverts' => $listAdverts
 		));
-
 	}
 
 	public function viewAction($id)
@@ -110,6 +107,18 @@ class AdvertController extends Controller
 
 	public function addAction(Request $request)
 	{
+
+		// On récupère le service
+		$antispam = $this->container->get('oc_platform.antispam');
+
+		// Je pars du principe que $text contient le texte d'un message quelconque
+		$text = '...';
+		if ($antispam->isSpam($text)) {
+			throw new \Exception('Votre message a été détecté comme spam !');
+		}
+
+		// Ici le message n'est pas un spam
+
 		// La gestion d'un formulaire est particulière, mais l'idée est la suivante :
 
 		// Si la requête est en POST, c'est que le visiteur a soumis le formulaire
@@ -125,6 +134,7 @@ class AdvertController extends Controller
 		// Si on n'est pas en POST, alors on affiche le formulaire
 		return $this->render('OCPlatformBundle:Advert:add.html.twig');
 	}
+
 
 	public function editAction($id, Request $request)
 
@@ -165,4 +175,6 @@ class AdvertController extends Controller
 
 		return $this->render('OCPlatformBundle:Advert:delete.html.twig');
 	}
+
+
 }
