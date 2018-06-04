@@ -1,3 +1,4 @@
+{# utilisation du layout général qui a été déplacé dans CoreBundle\resources\views\Core#}
 {% extends "CoreBundle:Core:layout.html.twig" %}
 
 
@@ -7,5 +8,8 @@
     <header>
         <h1>Contact</h1>
     </header>
+{# On récupère les variables et fonctions de la méthode indexAction du controleur Advertcontroller
+ qui se trouve dans l'autre bundle PlatformBundle : utile pour la variable $listAdverts #}
+    {{ render(controller("OCPlatformBundle:Advert:index")) }}
 
 {% endblock %}

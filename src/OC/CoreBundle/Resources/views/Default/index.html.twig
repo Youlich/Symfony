@@ -1,27 +1,20 @@
-{# src/OC/PlatformBundle/Resources/views/Advert/index.html.twig #}
-
-{% extends "OCPlatformBundle::layout.html.twig" %}
+{# utilisation du layout général qui a été déplacé dans CoreBundle\resources\views\Core#}
+{% extends "CoreBundle:Core:layout.html.twig" %}
 
 {% block title %}
     Accueil - {{ parent() }}
 {% endblock %}
 
-{% block ocplatform_body %}
+{% block body %}
 
-    <h2>Liste des annonces</h2>
+{# On affiche tous les messages flash dont le nom est « info » #}
+    {% for message in app.session.flashbag.get('info') %}
+        <div class="alert alert-info">Message flash : {{ message }}</div>
+    {% endfor %}
 
-    <ul>
-        {% for advert in listAdverts %}
-            <li>
-                <a href="{{ path('oc_platform_view', {'id': advert.id}) }}">
-                    {{ advert.title }}
-                </a>
-                par {{ advert.author }},
-                le {{ advert.date|date('d/m/Y') }}
-            </li>
-        {% else %}
-            <li>Pas (encore !) d'annonces</li>
-        {% endfor %}
-    </ul>
+    <h2>Dernières annonces</h2>
+{# On récupère les annonces en utilisant la méthode menuAction du controleur Advertcontroller dans l'autre bundle PlatformBundle
+ celà nous permet aussi de récupérer la variable $listAdverts#}
+    {{ render(controller("OCPlatformBundle:Advert:menu", {'limit': 3})) }}
 
 {% endblock %}
