@@ -1,5 +1,5 @@
 <?php
-// src/OC/PlatformBundle/Entity/AdvertSkill.php
+
 namespace OC\PlatformBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 /**

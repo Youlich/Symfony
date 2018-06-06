@@ -1,10 +1,10 @@
 <?php
-// src/OC/PlatformBundle/Entity/Image
+
 namespace OC\PlatformBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Table(name="image")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OC\PlatformBundle\Repository\ImageRepository")
  */
 class Image
 {

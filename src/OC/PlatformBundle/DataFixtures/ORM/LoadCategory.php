@@ -1,8 +1,5 @@
 <?php
 
-// src/OC/PlatformBundle/DataFixtures/ORM/LoadCategory.php
-
-
 namespace OC\PlatformBundle\DataFixtures\ORM;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;

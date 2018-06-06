@@ -1,13 +1,33 @@
 <?php
-// src/OC/PlatformBundle/Entity/Application.php
+
 namespace OC\PlatformBundle\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
+
 /**
  * @ORM\Table(name="application")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OC\PlatformBundle\Repository\ApplicationRepository")
+ * @ORM\HasLifecycleCallbacks()
+ *
  */
 class Application
 {
+	/**
+	 * @ORM\PrePersist
+	 */
+	public function increase()
+	{
+		$this->getAdvert()->increaseApplication();
+	}
+
+	/**
+	 * @ORM\PreRemove
+	 */
+	public function decrease()
+	{
+		$this->getAdvert()->decreaseApplication();
+	}
+
 	/**
 	 * @ORM\Column(name="id", type="integer")
 	 * @ORM\Id
