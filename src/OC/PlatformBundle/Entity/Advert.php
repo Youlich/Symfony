@@ -5,12 +5,9 @@ namespace OC\PlatformBundle\Entity;
 
 
 use Doctrine\Common\Collections\ArrayCollection;
-
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
-
-// N'oubliez pas ce use :
-
-use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Mapping\Annotation as Gedmo; //pour le slug
 
 
 /**
@@ -62,7 +59,7 @@ class Advert
 
 
 	/**
-	 * @ORM\OneToOne(targetEntity="OC\PlatformBundle\Entity\Image", cascade={"persist"})
+	 * @ORM\OneToOne(targetEntity="OC\PlatformBundle\Entity\Image", cascade={"persist", "remove"})
 	 */
 	private $image;
 
@@ -77,13 +74,13 @@ class Advert
 	 */
 	private $nbApplications = 0;
 
-
 	/**
 	 * @Gedmo\Slug(fields={"title"})
 	 * @ORM\Column(name="slug", type="string", length=255, unique=true)
 	 */
 
 	private $slug;
+
 
 //le constructeur
 	public function __construct()
@@ -317,19 +314,18 @@ class Advert
 	}
 
 	/**
-	 * @param string $slug
+	 * @return mixed
 	 */
-	public function setSlug($slug)
-	{
-		$this->slug = $slug;
+	public function getSlug() {
+		return $this->slug;
 	}
 
 	/**
-	 * @return string
+	 * @param mixed $slug
 	 */
-	public function getSlug()
-	{
-		return $this->slug;
+	public function setSlug( $slug ) {
+		$this->slug = $slug;
 	}
+
 
 }
