@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le :  mar. 05 juin 2018 à 14:34
+-- Généré le :  mer. 13 juin 2018 à 15:26
 -- Version du serveur :  5.7.21
--- Version de PHP :  7.2.4
+-- Version de PHP :  5.6.35
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -37,18 +37,24 @@ CREATE TABLE IF NOT EXISTS `advert` (
   `author` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `content` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `published` tinyint(1) NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `nb_applications` int(11) NOT NULL,
+  `slug` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_54F1F40B3DA5256D` (`image_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Déchargement des données de la table `advert`
 --
 
-INSERT INTO `advert` (`id`, `image_id`, `date`, `title`, `author`, `content`, `published`) VALUES
-(1, 1, '2018-06-05 14:14:39', 'Recherche développeur Symfony.', 'Alexandre', 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…', 1),
-(2, 2, '2018-06-05 14:27:04', 'Mission de webmaster', 'Hugo', 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…', 1),
-(3, NULL, '2018-06-05 14:27:04', 'Offre de stage webdesigner', 'Mathieu', 'Nous proposons un poste pour webdesigner. Blabla…', 1);
+INSERT INTO `advert` (`id`, `image_id`, `date`, `title`, `author`, `content`, `published`, `updated_at`, `nb_applications`, `slug`) VALUES
+(27, NULL, '2018-06-11 16:09:19', 'Recherche développeur Symfony', 'Fabien', 'Nous recherchons un développeur Symfony débutant sur Toulouse.', 1, NULL, 0, ''),
+(28, NULL, '2018-06-11 16:09:19', 'Recherche développeur PHP', 'Rasmus', 'Nous recherchons un développeur PHP expérimenté sur Toulouse.', 1, NULL, 0, ''),
+(29, NULL, '2018-06-11 16:09:19', 'Recherche développeur Python', 'Guido', 'Nous recherchons un développeur Python sur Bangkok.', 1, NULL, 0, ''),
+(30, NULL, '2018-06-11 16:09:19', 'Recherche développeur Linux', 'Linus', 'Nous recherchons un développeur Linux.', 1, NULL, 0, ''),
+(31, NULL, '2018-06-11 16:09:19', 'Recherche développeur Ruby on Rails', 'David', 'Nous recherchons un développeur Ruby On Rails sur Paris', 1, NULL, 0, ''),
+(43, 14, '2018-06-13 12:12:00', 'Recherche Développeur Symphony', 'JulieTest', 'test', 1, NULL, 0, 'recherche-developpeur-symphony');
 
 -- --------------------------------------------------------
 
@@ -82,17 +88,7 @@ CREATE TABLE IF NOT EXISTS `application` (
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_A45BDDC1D07ECCB6` (`advert_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Déchargement des données de la table `application`
---
-
-INSERT INTO `application` (`id`, `advert_id`, `author`, `content`, `date`) VALUES
-(1, 1, 'Marine', 'J\'ai toutes les qualités requises.', '2018-06-05 14:14:39'),
-(2, 1, 'Pierre', 'Je suis très motivé.', '2018-06-05 14:14:39'),
-(3, 2, 'Marine', 'J\'ai toutes les qualités requises.', '2018-06-05 14:27:04'),
-(4, 3, 'Pierre', 'Je suis très motivé.', '2018-06-05 14:27:04');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -105,7 +101,18 @@ CREATE TABLE IF NOT EXISTS `category` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Déchargement des données de la table `category`
+--
+
+INSERT INTO `category` (`id`, `name`) VALUES
+(26, 'Développement web'),
+(27, 'Développement mobile'),
+(28, 'Graphisme'),
+(29, 'Intégration'),
+(30, 'Réseau');
 
 -- --------------------------------------------------------
 
@@ -119,15 +126,14 @@ CREATE TABLE IF NOT EXISTS `image` (
   `url` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `alt` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Déchargement des données de la table `image`
 --
 
 INSERT INTO `image` (`id`, `url`, `alt`) VALUES
-(1, 'http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg', 'Job de rêve'),
-(2, 'https://demo.phpgang.com/crop-images/demo_files/pool.jpg', 'tigre');
+(14, 'jpeg', 'book-3356154_1280.jpg');
 
 -- --------------------------------------------------------
 
@@ -144,6 +150,17 @@ CREATE TABLE IF NOT EXISTS `oc_advert_category` (
   KEY `IDX_435EA00612469DE2` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Déchargement des données de la table `oc_advert_category`
+--
+
+INSERT INTO `oc_advert_category` (`advert_id`, `category_id`) VALUES
+(27, 26),
+(27, 29),
+(28, 26),
+(31, 26),
+(43, 26);
+
 -- --------------------------------------------------------
 
 --
@@ -155,7 +172,20 @@ CREATE TABLE IF NOT EXISTS `skill` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Déchargement des données de la table `skill`
+--
+
+INSERT INTO `skill` (`id`, `name`) VALUES
+(36, 'PHP'),
+(37, 'Symfony'),
+(38, 'C++'),
+(39, 'Java'),
+(40, 'Photoshop'),
+(41, 'Blender'),
+(42, 'Bloc-note');
 
 --
 -- Contraintes pour les tables déchargées
