@@ -107,5 +107,4 @@ class AdvertRepository extends EntityRepository
 		            ->getQuery()
 		            ->getResult();
 	}
-
 }

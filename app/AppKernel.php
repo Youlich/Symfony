@@ -18,6 +18,7 @@ class AppKernel extends Kernel
 			new OC\PlatformBundle\OCPlatformBundle(),
 			new OC\CoreBundle\CoreBundle(),
 			new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
+			new \FOS\UserBundle\FOSUserBundle(),
 		);
 		if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {
 			$bundles[] = new Symfony\Bundle\DebugBundle\DebugBundle();

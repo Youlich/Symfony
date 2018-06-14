@@ -35,7 +35,6 @@ class PurgerAdvert
 			// On peut maintenant supprimer l'annonce
 			$this->em->remove($advert);
 		}
-		// Et on n'oublie pas de faire un flush !
 		$this->em->flush();
 	}
 }
