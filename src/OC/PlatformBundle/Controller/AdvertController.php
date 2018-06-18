@@ -1,11 +1,16 @@
 <?php
 
-
 namespace OC\PlatformBundle\Controller;
 
+use OC\PlatformBundle\Entity\Advert;
+use OC\PlatformBundle\Form\AdvertType;
+use OC\PlatformBundle\Form\AdvertEditType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
 
 class AdvertController extends Controller
 {
@@ -43,31 +48,20 @@ class AdvertController extends Controller
 		));
 	}
 
-	public function viewAction($id)
+
+	public function viewAction(Advert $advert)
 	{
 		$em = $this->getDoctrine()->getManager();
-
-		// Pour récupérer une seule annonce, on utilise la méthode find($id)
-		$advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
-
-		// $advert est donc une instance de OC\PlatformBundle\Entity\Advert
-		// ou null si l'id $id n'existe pas, d'où ce if :
-		if (null === $advert) {
-			throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
-		}
-
 		// Récupération de la liste des candidatures de l'annonce
 		$listApplications = $em
 			->getRepository('OCPlatformBundle:Application')
 			->findBy(array('advert' => $advert))
 		;
-
 		// Récupération des AdvertSkill de l'annonce
 		$listAdvertSkills = $em
 			->getRepository('OCPlatformBundle:AdvertSkill')
 			->findBy(array('advert' => $advert))
 		;
-
 		return $this->render('OCPlatformBundle:Advert:view.html.twig', array(
 			'advert'           => $advert,
 			'listApplications' => $listApplications,
@@ -77,60 +71,111 @@ class AdvertController extends Controller
 
 	public function addAction(Request $request)
 	{
-		$em = $this->getDoctrine()->getManager();
-
-		// On ne sait toujours pas gérer le formulaire, patience cela vient dans la prochaine partie !
-
-		if ($request->isMethod('POST')) {
+		$advert = new Advert();
+		$form   = $this->get('form.factory')->create(AdvertType::class, $advert);
+		if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+			$em = $this->getDoctrine()->getManager();
+			$em->persist($advert);
+			$em->flush();
 			$request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
-
 			return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
+
 		}
-
-		return $this->render('OCPlatformBundle:Advert:add.html.twig');
-	}
-
-	public function editAction($id, Request $request)
-	{
-		$em = $this->getDoctrine()->getManager();
-
-		$advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
-
-		if (null === $advert) {
-			throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
-		}
-
-		// Ici encore, il faudra mettre la gestion du formulaire
-
-		if ($request->isMethod('POST')) {
-			$request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
-
-			return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
-		}
-
-		return $this->render('OCPlatformBundle:Advert:edit.html.twig', array(
-			'advert' => $advert
+		return $this->render('OCPlatformBundle:Advert:add.html.twig', array(
+			'form' => $form->createView(),
 		));
 	}
 
-	public function deleteAction($id)
+	public function editAction($id, Request $request)
+
 	{
+
 		$em = $this->getDoctrine()->getManager();
+
 
 		$advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
 
+
 		if (null === $advert) {
+
 			throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
+
 		}
 
-		// On boucle sur les catégories de l'annonce pour les supprimer
-		foreach ($advert->getCategories() as $category) {
-			$advert->removeCategory($category);
+
+		$form = $this->get('form.factory')->create(AdvertEditType::class, $advert);
+
+
+		if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+
+			// Inutile de persister ici, Doctrine connait déjà notre annonce
+
+			$em->flush();
+
+
+			$request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
+
+
+			return $this->redirectToRoute('oc_platform_view', array('id' => $advert->getId()));
+
 		}
 
-		$em->flush();
 
-		return $this->render('OCPlatformBundle:Advert:delete.html.twig');
+		return $this->render('OCPlatformBundle:Advert:edit.html.twig', array(
+
+			'advert' => $advert,
+
+			'form'   => $form->createView(),
+
+		));
+
+	}
+
+	public function deleteAction(Request $request, $id)
+
+	{
+
+		$em = $this->getDoctrine()->getManager();
+
+
+		$advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
+
+
+		if (null === $advert) {
+
+			throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
+
+		}
+
+
+		// On crée un formulaire vide, qui ne contiendra que le champ CSRF
+
+		// Cela permet de protéger la suppression d'annonce contre cette faille
+
+		$form = $this->get('form.factory')->create();
+
+
+		if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+
+			$em->remove($advert);
+
+			$em->flush();
+
+			$request->getSession()->getFlashBag()->add('info', "L'annonce a bien été supprimée.");
+			return $this->redirectToRoute('oc_platform_home');
+
+		}
+
+
+
+		return $this->render('OCPlatformBundle:Advert:delete.html.twig', array(
+
+			'advert' => $advert,
+
+			'form'   => $form->createView(),
+
+		));
+
 	}
 
 	public function menuAction($limit)
@@ -147,5 +192,47 @@ class AdvertController extends Controller
 		return $this->render('OCPlatformBundle:Advert:menu.html.twig', array(
 			'listAdverts' => $listAdverts
 		));
+	}
+
+		public function purgeAction($days)
+	{
+		$em = $this->getDoctrine()->getManager();
+		//call le service de purge
+		$purge = $this->get('oc_platform.purge');
+		$purge->purge($days);
+
+		return new Response( 'Annonces purgées avec succès !' );
+	}
+
+	public function testAction()
+	{
+		$advert = new Advert();
+		$advert->setTitle("Recherche développeur !");
+		$em = $this->getDoctrine()->getManager();
+		$em->persist($advert);
+		$em->flush(); // C'est à ce moment qu'est généré le slug
+
+		return new Response('Slug généré : '.$advert->getSlug());
+
+		// Affiche « Slug généré : recherche-developpeur »
+
+	}
+
+	public function translationAction($name)
+	{
+		return $this->render('OCPlatformBundle:Advert:translation.html.twig', array(
+			'name' => $name
+		));
+	}
+
+	/**
+
+	 * @ParamConverter("json")
+
+	 */
+
+	public function ParamConverterAction($json)
+	{
+		return new Response(print_r($json, true));
 	}
 }

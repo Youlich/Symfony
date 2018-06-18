@@ -4,7 +4,19 @@ core:
 
 oc_platform:
     resource: "@OCPlatformBundle/Resources/config/routing.yml"
-    prefix: /platform
+    prefix:   /{_locale}/platform # Ici, on ajoute {_locale} au préfixe !
+    requirements:
+        _locale: en|fr # les locales disponibles, séparées par des pipes « | »
 
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
+oc_platform_translation:
+    path: /{_locale}/traduction/{name}
+    defaults:
+        _controller: "OCPlatformBundle:Advert:translation"
+
+oc_platform_paramconverter:
+     path: /test/{json}
+     defaults:
+        _controller: "OCPlatformBundle:Advert:ParamConverter"

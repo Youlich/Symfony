@@ -1,0 +1,12 @@
+<html>
+<body>
+<br>
+<br>
+<br>
+<br>
+{{ 'hello'|trans({'%name%': name}) }}
+<br>
+{{ 'Aujourd\'hui nous sommes le'|trans }} {{ 'now'|localizeddate('full', 'none') }} {{'et il est'|trans }} {{ 'now'|localizeddate('none', 'short') }}
+
+</body>
+</html>
